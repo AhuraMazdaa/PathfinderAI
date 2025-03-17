@@ -1,2 +1,0 @@
-# PathfinderAI
-Pathifinder AI

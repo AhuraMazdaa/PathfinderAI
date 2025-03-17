@@ -1,160 +1,256 @@
-import React, { useState } from 'react';
-import { ChevronDown, Search, Edit, Bell, User, Home, BookOpen, Monitor, Users, RefreshCw, Plus, Clipboard } from 'lucide-react';
-
-const App = () => {
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [selectedUniversity, setSelectedUniversity] = useState(null);
-
-  const universities = [
-    { id: 1, name: "Harvard University" },
-    { id: 2, name: "Stanford University" },
-    { id: 3, name: "Indian School of Business" }
-  ];
-
-  const toggleDropdown = () => {
-    setIsDropdownOpen(!isDropdownOpen);
-  };
-
-  const selectUniversity = (university) => {
-    setSelectedUniversity(university);
-    setIsDropdownOpen(false);
-  };
-
-  return (
-    <div className="flex flex-col min-h-screen bg-gray-100">
-      {/* Navigation */}
-      <nav className="flex justify-between items-center bg-gray-800 text-white p-4">
-        <h1 className="text-xl font-semibold">College Application Dashboard</h1>
-        <div className="flex bg-gray-700 rounded px-3 py-2 w-80">
-          <input 
-            className="bg-transparent border-none text-white w-full focus:outline-none" 
-            placeholder="Search resources..." 
-          />
-          <button className="text-gray-400">
-            <Search size={20} />
-          </button>
-        </div>
-        <div className="flex gap-5">
-          <button><Edit size={20} /></button>
-          <button><Bell size={20} /></button>
-          <button><User size={20} /></button>
-        </div>
-      </nav>
-
-      <div className="flex flex-1">
-        {/* Sidebar */}
-        <aside className="fixed left-0 top-16 bottom-0 w-16 bg-gray-800 text-white flex flex-col items-center pt-5">
-          <div className="p-4 w-full flex justify-center cursor-pointer hover:bg-gray-700"><Clipboard size={20} /></div>
-          <div className="p-4 w-full flex justify-center cursor-pointer hover:bg-gray-700"><Home size={20} /></div>
-          <div className="p-4 w-full flex justify-center cursor-pointer hover:bg-gray-700"><BookOpen size={20} /></div>
-          <div className="p-4 w-full flex justify-center cursor-pointer hover:bg-gray-700"><Monitor size={20} /></div>
-          <div className="p-4 w-full flex justify-center cursor-pointer hover:bg-gray-700"><Users size={20} /></div>
-          <div className="p-4 w-full flex justify-center cursor-pointer hover:bg-gray-700"><RefreshCw size={20} /></div>
-          <div className="p-4 w-full flex justify-center cursor-pointer hover:bg-gray-700"><Plus size={20} /></div>
-        </aside>
-
-        {/* Main Content */}
-        <main className="ml-16 p-5 flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {/* Applications Card */}
-          <div className="bg-white rounded-lg p-6 shadow">
-            <h2 className="text-xl font-semibold mb-4">Applications</h2>
-            <p className="text-gray-600 mb-5">Track and manage your college applications efficiently.</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carbon Cloud Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f7f7f7;
+        }
+        
+        .navbar {
+            background-color: #1a1a1a;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 20px;
+            font-weight: 500;
+        }
+        
+        .search-container {
+            display: flex;
+            width: 40%;
+            max-width: 500px;
+            position: relative;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 8px 35px 8px 15px;
+            border-radius: 4px;
+            border: none;
+            background-color: #333;
+            color: white;
+        }
+        
+        .search-icon {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+        }
+        
+        .user-actions {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .user-actions a {
+            color: white;
+            text-decoration: none;
+        }
+        
+        .sidebar {
+            width: 60px;
+            background-color: #1a1a1a;
+            position: fixed;
+            top: 56px;
+            bottom: 0;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .sidebar-icon {
+            width: 100%;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-decoration: none;
+        }
+        
+        .main-content {
+            margin-left: 60px;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 5px;
+            padding: 25px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .card h2 {
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+        
+        .card p {
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 16px;
+            background-color: transparent;
+            color: #0066ff;
+            border: 1px solid #0066ff;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .btn-arrow {
+            margin-left: 8px;
+        }
+        
+        .wide-card {
+            grid-column: span 2;
+            color: white;
+            position: relative;
+            background-size: cover;
+            background-position: center;
+            padding: 25px;
+            height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        
+        .dark-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to right, rgba(0,0,0,0.7), rgba(0,0,0,0.3));
+            z-index: 1;
+        }
+        
+        .card-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .smart-grid {
+            background-image: url('https://images.unsplash.com/photo-1558494949-ef010cbdcc31?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80');
+        }
+        
+        .data-transfer {
+            background-image: url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80');
+        }
+        
+        @media (max-width: 768px) {
+            .search-container {
+                width: 60%;
+            }
             
-            {/* University Dropdown */}
-            <div className="mb-4 relative">
-              <button 
-                onClick={toggleDropdown}
-                className="w-full flex justify-between items-center bg-blue-50 border border-blue-200 rounded p-2 text-left"
-              >
-                {selectedUniversity ? selectedUniversity.name : "Select University"}
-                <ChevronDown size={20} className={`transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
-              </button>
-              
-              {isDropdownOpen && (
-                <div className="absolute z-10 mt-1 w-full bg-white shadow-lg rounded-md border border-gray-200">
-                  {universities.map(uni => (
-                    <div 
-                      key={uni.id} 
-                      className="p-2 hover:bg-blue-50 cursor-pointer"
-                      onClick={() => selectUniversity(uni)}
-                    >
-                      {uni.name}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+            .wide-card {
+                grid-column: span 1;
+            }
             
-            <button className="flex items-center bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-              Get Started <span className="ml-2">→</span>
-            </button>
-          </div>
-
-          {/* Resources Card */}
-          <div className="bg-white rounded-lg p-6 shadow">
-            <h2 className="text-xl font-semibold mb-4">Resources</h2>
-            <p className="text-gray-600 mb-5">Access college resources and application materials.</p>
-            <button className="flex items-center bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-              Get Started <span className="ml-2">→</span>
-            </button>
-          </div>
-
-          {/* Deadlines Card */}
-          <div className="bg-white rounded-lg p-6 shadow">
-            <h2 className="text-xl font-semibold mb-4">Deadlines</h2>
-            <p className="text-gray-600 mb-5">Check all your upcoming deadlines and status.</p>
-            <button className="flex items-center bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-              Get Started <span className="ml-2">→</span>
-            </button>
-          </div>
-
-          {/* Smart College Grid */}
-          <div className="md:col-span-2 relative rounded-lg overflow-hidden shadow min-h-48">
-            <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-black/40 z-10"></div>
-            <img src="/api/placeholder/800/300" alt="Smart College Grid" className="absolute inset-0 w-full h-full object-cover" />
-            <div className="relative z-20 p-6 text-white">
-              <h2 className="text-xl font-semibold mb-4">Smart College Grid</h2>
-              <p className="mb-5">Try out our newest feature Smart College Grid. Keep all your application progress in control.</p>
-              <button className="flex items-center bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-                Get Started <span className="ml-2">→</span>
-              </button>
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">Carbon Cloud Dashboard</div>
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="Search resources...">
+            <span class="search-icon">🔍</span>
+        </div>
+        <div class="user-actions">
+            <a href="#">✏️</a>
+            <a href="#">🔔</a>
+            <a href="#">👤</a>
+        </div>
+    </nav>
+    
+    <aside class="sidebar">
+        <a href="#" class="sidebar-icon">≡</a>
+        <a href="#" class="sidebar-icon">🏠</a>
+        <a href="#" class="sidebar-icon">☁️</a>
+        <a href="#" class="sidebar-icon">&lt;/&gt;</a>
+        <a href="#" class="sidebar-icon">👥</a>
+        <a href="#" class="sidebar-icon">🔄</a>
+        <a href="#" class="sidebar-icon">+</a>
+    </aside>
+    
+    <main class="main-content">
+        <div class="card">
+            <h2>AI</h2>
+            <p>Work efficiently with AI.</p>
+            <a href="#" class="btn">Get Started <span class="btn-arrow">→</span></a>
+        </div>
+        
+        <div class="card">
+            <h2>Infrastructure</h2>
+            <p>Enhance your infrastructure.</p>
+            <a href="#" class="btn">Get Started <span class="btn-arrow">→</span></a>
+        </div>
+        
+        <div class="card">
+            <h2>Services</h2>
+            <p>Check out all our services and status.</p>
+            <a href="#" class="btn">Get Started <span class="btn-arrow">→</span></a>
+        </div>
+        
+        <div class="wide-card smart-grid">
+            <div class="dark-overlay"></div>
+            <div class="card-content">
+                <h2>Smart Grid</h2>
+                <p>Try out our newest feature Smart Grid. Keep all your stuff in control.</p>
+                <a href="#" class="btn">Get Started <span class="btn-arrow">→</span></a>
             </div>
-          </div>
-
-          {/* Essays Card */}
-          <div className="bg-white rounded-lg p-6 shadow">
-            <h2 className="text-xl font-semibold mb-4">Essays</h2>
-            <p className="text-gray-600 mb-5">Finish setting up your essay drafts and revisions.</p>
-            <button className="flex items-center bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-              Get Started <span className="ml-2">→</span>
-            </button>
-          </div>
-
-          {/* College Application Insights */}
-          <div className="md:col-span-2 relative rounded-lg overflow-hidden shadow min-h-48">
-            <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-black/40 z-10"></div>
-            <img src="/api/placeholder/800/300" alt="College Application Insights" className="absolute inset-0 w-full h-full object-cover" />
-            <div className="relative z-20 p-6 text-white">
-              <h2 className="text-xl font-semibold mb-4">College Application Insights</h2>
-              <p className="mb-5">Save time and money thanks to application analytics. Learn more about your chances and opportunities.</p>
-              <button className="flex items-center bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-                Get Started <span className="ml-2">→</span>
-              </button>
+        </div>
+        
+        <div class="card">
+            <h2>Profile</h2>
+            <p>Set up your personal profile.</p>
+            <a href="#" class="btn">Get Started <span class="btn-arrow">→</span></a>
+        </div>
+        
+        <div class="card">
+            <h2>Security</h2>
+            <p>Finish setting up your security settings.</p>
+            <a href="#" class="btn">Get Started <span class="btn-arrow">→</span></a>
+        </div>
+        
+        <div class="wide-card data-transfer">
+            <div class="dark-overlay"></div>
+            <div class="card-content">
+                <h2>Fast Data Transfer</h2>
+                <p>Save time and money thanks to Fast Data Transfer. Learn more.</p>
+                <a href="#" class="btn">Get Started <span class="btn-arrow">→</span></a>
             </div>
-          </div>
-
-          {/* Profile Card */}
-          <div className="bg-white rounded-lg p-6 shadow">
-            <h2 className="text-xl font-semibold mb-4">Profile</h2>
-            <p className="text-gray-600 mb-5">Set up your personal profile and application details.</p>
-            <button className="flex items-center bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-              Get Started <span className="ml-2">→</span>
-            </button>
-          </div>
-        </main>
-      </div>
-    </div>
-  );
-};
-
-export default App;
+        </div>
+    </main>
+</body>
+</html>

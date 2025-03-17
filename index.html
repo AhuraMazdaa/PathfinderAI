@@ -1,266 +1,160 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>College Application Dashboard</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+import React, { useState } from 'react';
+import { ChevronDown, Search, Edit, Bell, User, Home, BookOpen, Monitor, Users, RefreshCw, Plus, Clipboard } from 'lucide-react';
 
-        body {
-            background-color: #f7f7f7;
-        }
+const App = () => {
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [selectedUniversity, setSelectedUniversity] = useState(null);
 
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: #333;
-            color: white;
-            padding: 15px 30px;
-        }
+  const universities = [
+    { id: 1, name: "Harvard University" },
+    { id: 2, name: "Stanford University" },
+    { id: 3, name: "Indian School of Business" }
+  ];
 
-        .navbar h1 {
-            font-size: 24px;
-            font-weight: 600;
-        }
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
 
-        .search-box {
-            display: flex;
-            background-color: #444;
-            border-radius: 4px;
-            padding: 6px 12px;
-            width: 400px;
-        }
+  const selectUniversity = (university) => {
+    setSelectedUniversity(university);
+    setIsDropdownOpen(false);
+  };
 
-        .search-box input {
-            background: transparent;
-            border: none;
-            color: white;
-            width: 100%;
-            padding: 5px;
-            outline: none;
-        }
+  return (
+    <div className="flex flex-col min-h-screen bg-gray-100">
+      {/* Navigation */}
+      <nav className="flex justify-between items-center bg-gray-800 text-white p-4">
+        <h1 className="text-xl font-semibold">College Application Dashboard</h1>
+        <div className="flex bg-gray-700 rounded px-3 py-2 w-80">
+          <input 
+            className="bg-transparent border-none text-white w-full focus:outline-none" 
+            placeholder="Search resources..." 
+          />
+          <button className="text-gray-400">
+            <Search size={20} />
+          </button>
+        </div>
+        <div className="flex gap-5">
+          <button><Edit size={20} /></button>
+          <button><Bell size={20} /></button>
+          <button><User size={20} /></button>
+        </div>
+      </nav>
 
-        .search-box button {
-            background: transparent;
-            border: none;
-            color: #aaa;
-            cursor: pointer;
-        }
+      <div className="flex flex-1">
+        {/* Sidebar */}
+        <aside className="fixed left-0 top-16 bottom-0 w-16 bg-gray-800 text-white flex flex-col items-center pt-5">
+          <div className="p-4 w-full flex justify-center cursor-pointer hover:bg-gray-700"><Clipboard size={20} /></div>
+          <div className="p-4 w-full flex justify-center cursor-pointer hover:bg-gray-700"><Home size={20} /></div>
+          <div className="p-4 w-full flex justify-center cursor-pointer hover:bg-gray-700"><BookOpen size={20} /></div>
+          <div className="p-4 w-full flex justify-center cursor-pointer hover:bg-gray-700"><Monitor size={20} /></div>
+          <div className="p-4 w-full flex justify-center cursor-pointer hover:bg-gray-700"><Users size={20} /></div>
+          <div className="p-4 w-full flex justify-center cursor-pointer hover:bg-gray-700"><RefreshCw size={20} /></div>
+          <div className="p-4 w-full flex justify-center cursor-pointer hover:bg-gray-700"><Plus size={20} /></div>
+        </aside>
 
-        .user-actions {
-            display: flex;
-            gap: 20px;
-        }
-
-        .user-actions button {
-            background: transparent;
-            border: none;
-            color: white;
-            cursor: pointer;
-            font-size: 18px;
-        }
-
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: 60px;
-            bottom: 0;
-            width: 60px;
-            background-color: #333;
-            color: white;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding-top: 20px;
-        }
-
-        .sidebar-item {
-            padding: 15px 0;
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            cursor: pointer;
-        }
-
-        .sidebar-item:hover {
-            background-color: #444;
-        }
-
-        .main-content {
-            margin-left: 60px;
-            padding: 20px;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-        }
-
-        .card {
-            background-color: white;
-            border-radius: 8px;
-            padding: 25px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-
-        .card h2 {
-            font-size: 24px;
-            margin-bottom: 15px;
-            color: #333;
-        }
-
-        .card p {
-            color: #666;
-            margin-bottom: 20px;
-            line-height: 1.5;
-        }
-
-        .get-started {
-            display: inline-flex;
-            align-items: center;
-            padding: 8px 16px;
-            background-color: #1a73e8;
-            color: white;
-            border-radius: 4px;
-            text-decoration: none;
-            font-weight: 500;
-            transition: background-color 0.2s;
-            border: none;
-            cursor: pointer;
-        }
-
-        .get-started:hover {
-            background-color: #1557b0;
-        }
-
-        .arrow-icon {
-            margin-left: 8px;
-        }
-
-        .wide-card {
-            grid-column: span 2;
-            background-size: cover;
-            background-position: center;
-            color: white;
-            position: relative;
-            overflow: hidden;
-            min-height: 200px;
-        }
-
-        .wide-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(to right, rgba(0,0,0,0.7), rgba(0,0,0,0.3));
-            z-index: 1;
-        }
-
-        .wide-card-content {
-            position: relative;
-            z-index: 2;
-        }
-
-        .smart-college-grid {
-            background-image: url('/api/placeholder/800/400');
-        }
-
-        .fast-data-transfer {
-            background-image: url('/api/placeholder/800/400');
-        }
-
-        @media (max-width: 768px) {
-            .main-content {
-                grid-template-columns: 1fr;
-            }
+        {/* Main Content */}
+        <main className="ml-16 p-5 flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          {/* Applications Card */}
+          <div className="bg-white rounded-lg p-6 shadow">
+            <h2 className="text-xl font-semibold mb-4">Applications</h2>
+            <p className="text-gray-600 mb-5">Track and manage your college applications efficiently.</p>
             
-            .wide-card {
-                grid-column: span 1;
-            }
+            {/* University Dropdown */}
+            <div className="mb-4 relative">
+              <button 
+                onClick={toggleDropdown}
+                className="w-full flex justify-between items-center bg-blue-50 border border-blue-200 rounded p-2 text-left"
+              >
+                {selectedUniversity ? selectedUniversity.name : "Select University"}
+                <ChevronDown size={20} className={`transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
+              </button>
+              
+              {isDropdownOpen && (
+                <div className="absolute z-10 mt-1 w-full bg-white shadow-lg rounded-md border border-gray-200">
+                  {universities.map(uni => (
+                    <div 
+                      key={uni.id} 
+                      className="p-2 hover:bg-blue-50 cursor-pointer"
+                      onClick={() => selectUniversity(uni)}
+                    >
+                      {uni.name}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
             
-            .search-box {
-                width: 200px;
-            }
-        }
-    </style>
-</head>
-<body>
-    <nav class="navbar">
-        <h1>College Application Dashboard</h1>
-        <div class="search-box">
-            <input type="text" placeholder="Search resources...">
-            <button>🔍</button>
-        </div>
-        <div class="user-actions">
-            <button>✏️</button>
-            <button>🔔</button>
-            <button>👤</button>
-        </div>
-    </nav>
+            <button className="flex items-center bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+              Get Started <span className="ml-2">→</span>
+            </button>
+          </div>
 
-    <aside class="sidebar">
-        <div class="sidebar-item">📋</div>
-        <div class="sidebar-item">🏠</div>
-        <div class="sidebar-item">📚</div>
-        <div class="sidebar-item">💻</div>
-        <div class="sidebar-item">👥</div>
-        <div class="sidebar-item">🔄</div>
-        <div class="sidebar-item">➕</div>
-    </aside>
+          {/* Resources Card */}
+          <div className="bg-white rounded-lg p-6 shadow">
+            <h2 className="text-xl font-semibold mb-4">Resources</h2>
+            <p className="text-gray-600 mb-5">Access college resources and application materials.</p>
+            <button className="flex items-center bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+              Get Started <span className="ml-2">→</span>
+            </button>
+          </div>
 
-    <main class="main-content">
-        <div class="card">
-            <h2>Applications</h2>
-            <p>Track and manage your college applications efficiently.</p>
-            <button class="get-started">Get Started <span class="arrow-icon">→</span></button>
-        </div>
+          {/* Deadlines Card */}
+          <div className="bg-white rounded-lg p-6 shadow">
+            <h2 className="text-xl font-semibold mb-4">Deadlines</h2>
+            <p className="text-gray-600 mb-5">Check all your upcoming deadlines and status.</p>
+            <button className="flex items-center bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+              Get Started <span className="ml-2">→</span>
+            </button>
+          </div>
 
-        <div class="card">
-            <h2>Resources</h2>
-            <p>Access college resources and application materials.</p>
-            <button class="get-started">Get Started <span class="arrow-icon">→</span></button>
-        </div>
-
-        <div class="card">
-            <h2>Deadlines</h2>
-            <p>Check all your upcoming deadlines and status.</p>
-            <button class="get-started">Get Started <span class="arrow-icon">→</span></button>
-        </div>
-
-        <div class="wide-card smart-college-grid">
-            <div class="wide-card-content">
-                <h2>Smart College Grid</h2>
-                <p>Try out our newest feature Smart College Grid. Keep all your application progress in control.</p>
-                <button class="get-started">Get Started <span class="arrow-icon">→</span></button>
+          {/* Smart College Grid */}
+          <div className="md:col-span-2 relative rounded-lg overflow-hidden shadow min-h-48">
+            <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-black/40 z-10"></div>
+            <img src="/api/placeholder/800/300" alt="Smart College Grid" className="absolute inset-0 w-full h-full object-cover" />
+            <div className="relative z-20 p-6 text-white">
+              <h2 className="text-xl font-semibold mb-4">Smart College Grid</h2>
+              <p className="mb-5">Try out our newest feature Smart College Grid. Keep all your application progress in control.</p>
+              <button className="flex items-center bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                Get Started <span className="ml-2">→</span>
+              </button>
             </div>
-        </div>
+          </div>
 
-        <div class="card">
-            <h2>Essays</h2>
-            <p>Finish setting up your essay drafts and revisions.</p>
-            <button class="get-started">Get Started <span class="arrow-icon">→</span></button>
-        </div>
+          {/* Essays Card */}
+          <div className="bg-white rounded-lg p-6 shadow">
+            <h2 className="text-xl font-semibold mb-4">Essays</h2>
+            <p className="text-gray-600 mb-5">Finish setting up your essay drafts and revisions.</p>
+            <button className="flex items-center bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+              Get Started <span className="ml-2">→</span>
+            </button>
+          </div>
 
-        <div class="wide-card fast-data-transfer">
-            <div class="wide-card-content">
-                <h2>College Application Insights</h2>
-                <p>Save time and money thanks to application analytics. Learn more about your chances and opportunities.</p>
-                <button class="get-started">Get Started <span class="arrow-icon">→</span></button>
+          {/* College Application Insights */}
+          <div className="md:col-span-2 relative rounded-lg overflow-hidden shadow min-h-48">
+            <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-black/40 z-10"></div>
+            <img src="/api/placeholder/800/300" alt="College Application Insights" className="absolute inset-0 w-full h-full object-cover" />
+            <div className="relative z-20 p-6 text-white">
+              <h2 className="text-xl font-semibold mb-4">College Application Insights</h2>
+              <p className="mb-5">Save time and money thanks to application analytics. Learn more about your chances and opportunities.</p>
+              <button className="flex items-center bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                Get Started <span className="ml-2">→</span>
+              </button>
             </div>
-        </div>
+          </div>
 
-        <div class="card">
-            <h2>Profile</h2>
-            <p>Set up your personal profile and application details.</p>
-            <button class="get-started">Get Started <span class="arrow-icon">→</span></button>
-        </div>
-    </main>
-</body>
-</html>
+          {/* Profile Card */}
+          <div className="bg-white rounded-lg p-6 shadow">
+            <h2 className="text-xl font-semibold mb-4">Profile</h2>
+            <p className="text-gray-600 mb-5">Set up your personal profile and application details.</p>
+            <button className="flex items-center bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+              Get Started <span className="ml-2">→</span>
+            </button>
+          </div>
+        </main>
+      </div>
+    </div>
+  );
+};
+
+export default App;
